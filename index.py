@@ -1,16 +1,34 @@
-"""
-steps:
-1. github
-  a. initialize in terminal
-  b. import to github website
-2. make txt files
-   a. create one for each of my classes
-   b. put in fake names as they would appear (w profile pic thing)
-   c. make the top line say the subject
-3. research file editing as a refresher
-4. go through each text file and remove profile pic line
-5. create a dictionary of people where the keys are the peoples names and the values are lists of the classes they have
-   a. use the subject name on the first line
-6. create a new dictionary with the same people but with the keys as the number of classes with them
-7. using the number value, rank them and list teh classes next to the name
-"""
+classes = {}
+num_classes = {}
+files = ["./members/chemistry.txt", "./members/english.txt", "./members/extraperiod.txt", "./members/history.txt", "./members/math.txt", "./members/spanish.txt"]
+
+for file in files:
+   with open(file, "r") as f:
+      lines = f.readlines()
+   with open(file, "w") as f:
+      for line in lines:
+         if "Profile picture" not in line.strip("\n"):
+            f.write(line)
+   with open(file, "r") as f:
+      unstripped_people = f.readlines()
+      people = []
+      for person in unstripped_people[1::]:
+         people.append(person.strip("\n"))
+      for person in people:
+         if person not in classes.keys():
+            classes[person] = [unstripped_people[0].strip("\n")]
+         else:
+            classes[person].append(unstripped_people[0].strip("\n"))
+for (key,value) in classes.items():
+   num_classes[key] = len(classes[key])
+
+ordered_classes = sorted(num_classes.items(), key = lambda x: x[1], reverse=True)
+
+with open("./members/results.txt", "w") as results:
+   for group in ordered_classes:
+      name = group[0]
+      amount = num_classes[name]
+      class_list = ", ".join(classes[name])
+      message = name.strip("\t") + ", " + str(amount) + ": " + class_list
+      if name != "Avery Jones\t":
+         results.write(message + "\n")
